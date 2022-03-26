@@ -1,19 +1,18 @@
-function playM3u8(url){
-  if(Hls.isSupported()) {
-      var video = document.getElementById('video');
-      video.volume = 1.0;
-      var hls = new Hls();
-      var m3u8Url = window.location.search;
-	  var urlParams = new URLSearchParams(m3u8Url);
-	  var vurl = urlParams.get('vurl');
-	  
-      hls.loadSource(vurl);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED,function() {
-        video.play();
-      });
-      document.title = url
-    }
-}
+  var video = document.getElementById('video');
+  var vurl = location.search.split('vurl=')[1];
 
-playM3u8(window.location.href.split("#")[1])
+
+  var videoSrc = vurl;
+  //
+  // First check for native browser HLS support
+  //
+  if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = videoSrc;
+    //
+    // If no native HLS support, check if HLS.js is supported
+    //
+  } else if (Hls.isSupported()) {
+    var hls = new Hls();
+    hls.loadSource(videoSrc);
+    hls.attachMedia(video);
+  }
